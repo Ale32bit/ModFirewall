@@ -3,13 +3,7 @@ package me.alexdevs;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.inject.Inject;
-import com.velocitypowered.api.command.CommandManager;
-import com.velocitypowered.api.event.Continuation;
-import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.connection.ConnectionHandshakeEvent;
-import com.velocitypowered.api.event.connection.LoginEvent;
-import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.PlayerModInfoEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
@@ -18,11 +12,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.util.ModInfo;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import org.slf4j.Logger;
-
-
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -51,7 +41,6 @@ public class ModFirewall {
     public void saveFile() {
         var dir = dataDirectory.toFile();
         var modListFilePath = Path.of(dir.getAbsolutePath(), "modlist.json");
-        var modListFile = modListFilePath.toFile();
         if (!dir.exists()) {
             dir.mkdir();
         }
