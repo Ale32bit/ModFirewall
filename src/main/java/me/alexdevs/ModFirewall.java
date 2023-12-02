@@ -6,13 +6,17 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.PlayerModInfoEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.event.proxy.ProxyReloadEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.util.ModInfo;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.slf4j.Logger;
+
+import java.awt.*;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -27,15 +31,13 @@ public class ModFirewall {
     private final Path dataDirectory;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     public ModListConfig modListConfig = null;
+    public ModFirewallConfig config;
 
     @Inject
     public ModFirewall(ProxyServer proxyServer, Logger logger, @DataDirectory Path dataDirectory) {
         this.server = proxyServer;
         this.logger = logger;
         this.dataDirectory = dataDirectory;
-
-        logger.info("ModFirewall constructed!");
-
     }
 
     public void saveFile() {
@@ -86,11 +88,27 @@ public class ModFirewall {
         var commandManager = server.getCommandManager();
         var meta = commandManager.metaBuilder("firewall");
         meta
-                .plugin(this)
-                .build();
+            .plugin(this)
+            .build();
         var firewallCommandRegister = FirewallCommand.createBrigadierCommand(this, server);
         commandManager.register(firewallCommandRegister);
+
+        Path configPath = dataDirectory.resolve("ModFirewall.toml");
+        config = ModFirewallConfig.read(configPath);
         readFile();
+    }
+
+    @Subscribe
+    public void onProxyReload(ProxyReloadEvent event) {
+        try {
+            Path configPath = dataDirectory.resolve("ModFirewall.toml");
+            var newConfig = ModFirewallConfig.read(configPath);
+            readFile();
+
+            config = newConfig;
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     @Subscribe
@@ -100,30 +118,56 @@ public class ModFirewall {
 
         var stringBuilder = new StringBuilder();
 
+        var hasUnknownMods = false;
         var mods = modInfo.getMods();
         for (var mod : mods) {
             var modName = getModId(mod);
             if (modListConfig.bannedMods.contains(modName)) {
                 var text = Component
-                        .text("You are not allowed to join with the mod:")
-                        .color(NamedTextColor.RED)
-                        .appendNewline()
-                        .append(Component
-                                .text(mod.getId())
-                                .color(NamedTextColor.YELLOW)
-                        );
+                    .text("You are not allowed to join with the mod:")
+                    .color(NamedTextColor.RED)
+                    .appendNewline()
+                    .append(Component
+                        .text(mod.getId())
+                        .color(NamedTextColor.YELLOW)
+                    )
+                    .appendNewline()
+                    .append(Component
+                        .text("This incident has been reported.")
+                        .color(NamedTextColor.GRAY));
+
                 player.disconnect(text);
                 logger.warn("Kicked " + player.getUsername() + " for the mod: " + modName);
+
+                var embed = new DiscordWebhook.EmbedObject();
+                embed.setAuthor(player.getUsername() + " (" + player.getUniqueId() + ")", null, null);
+                embed.setTitle("Kicked for forbidden mod");
+                embed.addField("Mod name", modName, true);
+                embed.setColor(new Color(0xff5555));
+
+                sendNotification(player, embed);
+
                 return;
             }
 
             if (!modListConfig.allowedMods.contains(modName)) {
                 stringBuilder.append(modName);
                 stringBuilder.append(", ");
+                hasUnknownMods = true;
             }
         }
 
-        logger.info(player.getUsername() + " joined with the unknown mods: " + stringBuilder);
+        if (hasUnknownMods) {
+            logger.info(player.getUsername() + " joined with the unknown mods: " + stringBuilder);
+
+            var embed = new DiscordWebhook.EmbedObject();
+            embed.setAuthor(player.getUsername() + " (" + player.getUniqueId() + ")", null, null);
+            embed.setTitle("Joined with unknown mods");
+            embed.addField("Mods", stringBuilder.toString(), true);
+            embed.setColor(new Color(0xffff55));
+
+            sendNotification(player, embed);
+        }
 
     }
 
@@ -131,18 +175,28 @@ public class ModFirewall {
         return mod.getId() + ":" + mod.getVersion();
     }
 
+    public void sendNotification(Player player, DiscordWebhook.EmbedObject embed) {
+        if (!config.isDiscordWebhookEnabled())
+            return;
+
+        try {
+            var webhook = new DiscordWebhook(config.getDiscordWebhookUrl());
+
+            webhook.setUsername("ModFirewall");
+            webhook.addEmbed(embed);
+            webhook.execute();
+        } catch (IOException e) {
+            logger.error(e.toString());
+        }
+    }
+
     public static class ModListConfig {
-        private ArrayList<String> allowedMods;
-        private ArrayList<String> bannedMods;
+        private final ArrayList<String> allowedMods;
+        private final ArrayList<String> bannedMods;
 
         public ModListConfig() {
             allowedMods = new ArrayList<>();
             bannedMods = new ArrayList<>();
-        }
-
-        public ModListConfig(ArrayList<String> allowedMods, ArrayList<String> bannedMods) {
-            this.allowedMods = allowedMods;
-            this.bannedMods = bannedMods;
         }
 
         public ArrayList<String> getAllowedMods() {

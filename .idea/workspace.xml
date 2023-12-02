@@ -4,8 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a82db79e-08d7-4f1f-8e1d-5725b78cb488" name="Changes" comment="&#10;Initial commit">
+    <list default="true" id="a82db79e-08d7-4f1f-8e1d-5725b78cb488" name="Changes" comment="Cleanup">
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/alexdevs/DiscordWebhook.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/alexdevs/ModFirewallConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/default-modfirewall.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/alexdevs/FirewallCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/alexdevs/FirewallCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/alexdevs/ModFirewall.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/alexdevs/ModFirewall.java" afterDir="false" />
     </list>
@@ -57,6 +63,7 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
@@ -65,10 +72,33 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "onboarding.tips.debug.path": "C:/Users/Alex/IdeaProjects/ModFirewall/src/main/java/me/alexdevs/Main.java",
+    "settings.editor.selected.configurable": "preferences.sourceCode.Java",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Gradle.Publish">
+    <configuration name="Publish" type="GradleRunConfiguration" factoryName="Gradle">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="jar" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
     <configuration name="Run Velocity" type="GradleRunConfiguration" factoryName="Gradle">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -91,6 +121,10 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Gradle.Run Velocity" />
+      <item itemvalue="Gradle.Publish" />
+    </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -102,7 +136,8 @@
       <updated>1701450316254</updated>
       <workItem from="1701450317227" duration="4884000" />
       <workItem from="1701463975941" duration="63000" />
-      <workItem from="1701465451032" duration="5896000" />
+      <workItem from="1701465451032" duration="6148000" />
+      <workItem from="1701511177584" duration="4818000" />
     </task>
     <task id="LOCAL-00001" summary="&#10;Initial commit">
       <option name="closed" value="true" />
@@ -112,7 +147,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701471277163</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Cleanup">
+      <option name="closed" value="true" />
+      <created>1701471362622</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1701471362622</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -126,7 +169,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="&#10;Initial commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="&#10;Initial commit" />
+    <MESSAGE value="Cleanup" />
+    <option name="LAST_COMMIT_MESSAGE" value="Cleanup" />
   </component>
   <component name="XDebuggerManager">
     <pin-to-top-manager>

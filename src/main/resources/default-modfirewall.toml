@@ -1,0 +1,8 @@
+# Do not touch this
+config-version = "1"
+
+# Enable notifications via Discord webhooks
+discord-webhook-enable = false
+
+# Discord webhook URK
+discord-webhook-url = ""
