@@ -16,10 +16,19 @@ public final class FirewallCommand {
         var firewallNode = LiteralArgumentBuilder
             .<CommandSource>literal("firewall")
             .requires(source -> source.hasPermission("modfirewall.firewall"))
-
             .then(LiteralArgumentBuilder
                 .<CommandSource>literal("allow")
                 .then(RequiredArgumentBuilder.<CommandSource, String>argument("modid", StringArgumentType.greedyString())
+                    .suggests((ctx, builder) -> {
+                        for (var mod : firewall.discoveredMods) {
+                            if (!firewall.modListConfig.getAllowedMods().contains(mod)
+                                && !firewall.modListConfig.getBannedMods().contains(mod)) {
+                                builder.suggest(mod);
+                            }
+                        }
+
+                        return builder.buildFuture();
+                    })
                     .executes(context -> {
                         var modid = context.getArgument("modid", String.class);
                         firewall.modListConfig.getAllowedMods().add(modid);
@@ -35,7 +44,7 @@ public final class FirewallCommand {
                                     .decoration(TextDecoration.UNDERLINED, true));
                         }
 
-                        source.sendMessage(text);
+                        source.sendMessage(firewall.textPrefix.append(text));
 
                         return Command.SINGLE_SUCCESS;
                     }))
@@ -44,21 +53,30 @@ public final class FirewallCommand {
             .then(LiteralArgumentBuilder
                 .<CommandSource>literal("forget")
                 .then(RequiredArgumentBuilder.<CommandSource, String>argument("modid", StringArgumentType.greedyString())
+                    .suggests((ctx, builder) -> {
+                        for (var mod : firewall.discoveredMods) {
+                            if (firewall.modListConfig.getAllowedMods().contains(mod)) {
+                                builder.suggest(mod);
+                            }
+                        }
+
+                        return builder.buildFuture();
+                    })
                     .executes(context -> {
                         var modid = context.getArgument("modid", String.class);
                         var source = context.getSource();
 
-                        Component textComponent;
+                        Component text;
                         var allowedMods = firewall.modListConfig.getAllowedMods();
                         if (allowedMods.contains(modid)) {
                             allowedMods.remove(modid);
                             firewall.saveFile();
-                            textComponent = Component.text("Removed " + modid + " from allowed mods!").color(NamedTextColor.GOLD);
+                            text = Component.text("Removed " + modid + " from allowed mods!").color(NamedTextColor.GOLD);
                         } else {
-                            textComponent = Component.text(modid + " not found in allowed mods!").color(NamedTextColor.RED);
+                            text = Component.text(modid + " not found in allowed mods!").color(NamedTextColor.RED);
                         }
 
-                        source.sendMessage(textComponent);
+                        source.sendMessage(firewall.textPrefix.append(text));
 
                         return Command.SINGLE_SUCCESS;
                     }))
@@ -67,6 +85,16 @@ public final class FirewallCommand {
             .then(LiteralArgumentBuilder
                 .<CommandSource>literal("ban")
                 .then(RequiredArgumentBuilder.<CommandSource, String>argument("modid", StringArgumentType.greedyString())
+                    .suggests((ctx, builder) -> {
+                        for (var mod : firewall.discoveredMods) {
+                            if (!firewall.modListConfig.getAllowedMods().contains(mod)
+                                && !firewall.modListConfig.getBannedMods().contains(mod)) {
+                                builder.suggest(mod);
+                            }
+                        }
+
+                        return builder.buildFuture();
+                    })
                     .executes(context -> {
                         var modid = context.getArgument("modid", String.class);
                         firewall.modListConfig.getBannedMods().add(modid);
@@ -81,7 +109,7 @@ public final class FirewallCommand {
                                     .color(NamedTextColor.RED)
                                     .decoration(TextDecoration.UNDERLINED, true));
                         }
-                        source.sendMessage(text);
+                        source.sendMessage(firewall.textPrefix.append(text));
 
                         return Command.SINGLE_SUCCESS;
                     }))
@@ -90,25 +118,68 @@ public final class FirewallCommand {
             .then(LiteralArgumentBuilder
                 .<CommandSource>literal("unban")
                 .then(RequiredArgumentBuilder.<CommandSource, String>argument("modid", StringArgumentType.greedyString())
+                    .suggests((ctx, builder) -> {
+                        for (var mod : firewall.discoveredMods) {
+                            if (firewall.modListConfig.getBannedMods().contains(mod)) {
+                                builder.suggest(mod);
+                            }
+                        }
+
+                        return builder.buildFuture();
+                    })
                     .executes(context -> {
                         var modid = context.getArgument("modid", String.class);
                         var source = context.getSource();
 
-                        Component textComponent;
+                        Component text;
                         var bannedMods = firewall.modListConfig.getBannedMods();
                         if (bannedMods.contains(modid)) {
                             bannedMods.remove(modid);
                             firewall.saveFile();
-                            textComponent = Component.text("Removed " + modid + " from banned mods!").color(NamedTextColor.GREEN);
+                            text = Component.text("Removed " + modid + " from banned mods!").color(NamedTextColor.GREEN);
                         } else {
-                            textComponent = Component.text(modid + " not found in banned mods!").color(NamedTextColor.RED);
+                            text = Component.text(modid + " not found in banned mods!").color(NamedTextColor.RED);
                         }
 
-                        source.sendMessage(textComponent);
+                        source.sendMessage(firewall.textPrefix.append(text));
 
                         return Command.SINGLE_SUCCESS;
                     }))
             )
+            .then(LiteralArgumentBuilder
+                .<CommandSource>literal("check")
+                .then(RequiredArgumentBuilder.<CommandSource, String>argument("modid", StringArgumentType.greedyString())
+                    .suggests((ctx, builder) -> {
+                        for (var mod : firewall.discoveredMods) {
+                            builder.suggest(mod);
+                        }
+
+                        return builder.buildFuture();
+                    })
+                    .executes(context -> {
+                        var modid = context.getArgument("modid", String.class);
+                        var source = context.getSource();
+
+                        var isAllowed = firewall.modListConfig.getAllowedMods().contains(modid);
+                        var isBanned = firewall.modListConfig.getBannedMods().contains(modid);
+
+                        Component text;
+                        if (isAllowed && isBanned) {
+                            text = Component.text(modid + " is in the allowed and banned lists!").color(NamedTextColor.GOLD);
+                        } else if (isAllowed) {
+                            text = Component.text(modid + " is in the allowed list!").color(NamedTextColor.GREEN);
+                        } else if (isBanned) {
+                            text = Component.text(modid + " is in the banned list!").color(NamedTextColor.RED);
+                        } else {
+                            text = Component.text(modid + " not found in any list!").color(NamedTextColor.WHITE);
+                        }
+
+                        source.sendMessage(firewall.textPrefix.append(text));
+
+                        return Command.SINGLE_SUCCESS;
+                    }))
+            )
+
             .build();
 
         return new BrigadierCommand(firewallNode);

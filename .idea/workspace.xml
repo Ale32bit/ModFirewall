@@ -4,14 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a82db79e-08d7-4f1f-8e1d-5725b78cb488" name="Changes" comment="Cleanup">
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/alexdevs/DiscordWebhook.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/alexdevs/ModFirewallConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/default-modfirewall.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="a82db79e-08d7-4f1f-8e1d-5725b78cb488" name="Changes" comment="Add Discord webhook notifications">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/alexdevs/FirewallCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/alexdevs/FirewallCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/alexdevs/ModFirewall.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/alexdevs/ModFirewall.java" afterDir="false" />
     </list>
@@ -137,7 +131,7 @@
       <workItem from="1701450317227" duration="4884000" />
       <workItem from="1701463975941" duration="63000" />
       <workItem from="1701465451032" duration="6148000" />
-      <workItem from="1701511177584" duration="4818000" />
+      <workItem from="1701511177584" duration="8868000" />
     </task>
     <task id="LOCAL-00001" summary="&#10;Initial commit">
       <option name="closed" value="true" />
@@ -155,7 +149,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701471362622</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Add Discord webhook notifications">
+      <option name="closed" value="true" />
+      <created>1701519057630</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1701519057630</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -167,10 +169,22 @@
     <option featureType="dependencySupport" implementationName="java:net.kyori:adventure-api" />
     <option featureType="dependencySupport" implementationName="executable:kubectl" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="&#10;Initial commit" />
     <MESSAGE value="Cleanup" />
-    <option name="LAST_COMMIT_MESSAGE" value="Cleanup" />
+    <MESSAGE value="Add Discord webhook notifications" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add Discord webhook notifications" />
   </component>
   <component name="XDebuggerManager">
     <pin-to-top-manager>

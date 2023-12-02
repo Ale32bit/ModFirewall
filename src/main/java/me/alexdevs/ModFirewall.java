@@ -21,17 +21,28 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.util.HashSet;
 
 @Plugin(id = "modfirewall", name = "ModFirewall", version = "0.1.0-SNAPSHOT", url = "https://alexdevs.me", description = "Get what mods clients are using.", authors = {"AlexDevs"})
 public class ModFirewall {
-
+    public HashSet<String> discoveredMods = new HashSet<>();
     private final ProxyServer server;
     private final Logger logger;
     private final Path dataDirectory;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     public ModListConfig modListConfig = null;
     public ModFirewallConfig config;
+    public Component textPrefix = Component.empty()
+        .append(Component
+            .text("[")
+            .color(NamedTextColor.DARK_GRAY))
+        .append(Component
+            .text("ModFirewall")
+            .color(NamedTextColor.GOLD))
+        .append(Component
+            .text("]")
+            .color(NamedTextColor.DARK_GRAY))
+        .appendSpace();
 
     @Inject
     public ModFirewall(ProxyServer proxyServer, Logger logger, @DataDirectory Path dataDirectory) {
@@ -76,11 +87,13 @@ public class ModFirewall {
             var reader = new FileReader(modListFilePath.toString());
 
             modListConfig = gson.fromJson(reader, ModListConfig.class);
-
             reader.close();
         } catch (IOException e) {
             logger.error("Could not read from file: " + e.getMessage());
         }
+
+        discoveredMods.addAll(modListConfig.allowedMods);
+        discoveredMods.addAll(modListConfig.bannedMods);
     }
 
     @Subscribe
@@ -122,6 +135,7 @@ public class ModFirewall {
         var mods = modInfo.getMods();
         for (var mod : mods) {
             var modName = getModId(mod);
+            discoveredMods.add(modName);
             if (modListConfig.bannedMods.contains(modName)) {
                 var text = Component
                     .text("You are not allowed to join with the mod:")
@@ -145,7 +159,7 @@ public class ModFirewall {
                 embed.addField("Mod name", modName, true);
                 embed.setColor(new Color(0xff5555));
 
-                sendNotification(player, embed);
+                sendNotification(embed);
 
                 return;
             }
@@ -166,7 +180,7 @@ public class ModFirewall {
             embed.addField("Mods", stringBuilder.toString(), true);
             embed.setColor(new Color(0xffff55));
 
-            sendNotification(player, embed);
+            sendNotification(embed);
         }
 
     }
@@ -175,7 +189,7 @@ public class ModFirewall {
         return mod.getId() + ":" + mod.getVersion();
     }
 
-    public void sendNotification(Player player, DiscordWebhook.EmbedObject embed) {
+    public void sendNotification(DiscordWebhook.EmbedObject embed) {
         if (!config.isDiscordWebhookEnabled())
             return;
 
@@ -191,19 +205,19 @@ public class ModFirewall {
     }
 
     public static class ModListConfig {
-        private final ArrayList<String> allowedMods;
-        private final ArrayList<String> bannedMods;
+        private final HashSet<String> allowedMods;
+        private final HashSet<String> bannedMods;
 
         public ModListConfig() {
-            allowedMods = new ArrayList<>();
-            bannedMods = new ArrayList<>();
+            allowedMods = new HashSet<>();
+            bannedMods = new HashSet<>();
         }
 
-        public ArrayList<String> getAllowedMods() {
+        public HashSet<String> getAllowedMods() {
             return allowedMods;
         }
 
-        public ArrayList<String> getBannedMods() {
+        public HashSet<String> getBannedMods() {
             return bannedMods;
         }
     }
